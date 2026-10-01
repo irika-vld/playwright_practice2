@@ -25,6 +25,15 @@ export abstract class BasePage {
     await expect(this.toLocator(selector)).toBeVisible();
   }
 
+
+// Для быстрого создания локатора в тестовом файле *.spec
+
+  public locator(selector: string | Locator): Locator {
+    return this.toLocator(selector)
+  }
+
+
+
   // Преобразование строки в локатор
 
   protected toLocator(selcector: string | Locator): Locator {

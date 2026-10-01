@@ -1,22 +1,17 @@
-import { test, expect } from "@playwright/test";
-import ManagePage from "./../pages/ManagePage";
+import { test, expect } from "../fixtures/pom.fixture";
 
 test.describe("Авторизация", () => {
-  let mp: ManagePage;
-
-  test.beforeEach(({ page }) => {
-    mp = new ManagePage(page);
+  test("Авторизация по валидным логину и паролю", async ({ pm, validUser }) => {
+    await pm.loginPage.openLoginPage(); // используем свойства расширенного объекта test
+    await pm.loginPage.userLogin(validUser.username, validUser.password);
+    await pm.securePage.assertLoginSuccess();
   });
 
-  test("Авторизация по валидным логину и паролю", async () => {
-    await mp.loginPage.openLoginPage();
-    await mp.loginPage.userLogin("tomsmith", "SuperSecretPassword!");
-    await mp.securePage.assertLoginSuccess();
-  });
+  test("Авторизация по НЕвалидным логину и паролю", async ({pm}) => {
+    await pm.loginPage.openLoginPage();
+    await pm.loginPage.userLogin("invalidlogin", "invalidpass");
+    await pm.loginPage.assertLoginFiled();
 
-  test("Авторизация по НЕвалидным логину и паролю", async () => {
-    await mp.loginPage.openLoginPage();
-    await mp.loginPage.userLogin("invalidlogin", "invalidpass");
-    await mp.loginPage.assertLoginFiled();
+    await expect(pm.loginPage.locator('#flash')).toBeVisible()
   });
 });

@@ -1,24 +1,24 @@
-import { test, expect } from "@playwright/test";
-import ManagePage from "./../pages/ManagePage";
+import { test, expect } from "../fixtures/pom.fixture";
 
 test.describe("Проверка страницы с чекбоксами", () => {
-  let mp: ManagePage;
+  test("Отметить первый чекбокс и убрать отметку со второго", async ({
+    pm,
+    page,
+  }) => {
+    await pm.checkboxesPage.openCheckboxesPage();
+    await pm.checkboxesPage.checkFirstCheckbox();
 
-  test.beforeEach(({ page }) => {
-    mp = new ManagePage(page);
+    await expect(page).toHaveScreenshot();
+    await expect(pm.checkboxesPage.locator("form#checkboxes")).toBeVisible();
+
+    await pm.checkboxesPage.uncheckSecondCheckbox();
+   await pm.checkboxesPage.assertCheckboxesState(true, false);
   });
 
-  test("Отметить первый чекбокс и убрать отметку со второго", async () => {
-    await mp.checkboxesPage.openCheckboxesPage();
-    await mp.checkboxesPage.checkFirstCheckbox();
-    await mp.checkboxesPage.uncheckSecondCheckbox();
-    await mp.checkboxesPage.assertCheckboxesState(true, false);
+  test("Убрать отметку с обоих чекбоксов", async ({pm}) => {
+    await pm.checkboxesPage.openCheckboxesPage();
+    await pm.checkboxesPage.uncheckFirstCheckbox();
+    await pm.checkboxesPage.uncheckSecondCheckbox();
+    await pm.checkboxesPage.assertCheckboxesState(false, false);
   });
-
-    test("Убрать отметку с обоих чекбоксов", async () => {
-      await mp.checkboxesPage.openCheckboxesPage();
-      await mp.checkboxesPage.uncheckFirstCheckbox();
-      await mp.checkboxesPage.uncheckSecondCheckbox();
-      await mp.checkboxesPage.assertCheckboxesState(false, false);
-    });
 });
